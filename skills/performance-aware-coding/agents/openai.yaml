@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance-Aware Coding"
+  short_description: "Catch costly work while building features"
+  default_prompt: "Use $performance-aware-coding to review this change for likely performance costs."
