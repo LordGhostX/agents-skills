@@ -12,6 +12,15 @@ python3 scripts/install_skills.py
 
 The installer copies skills to `${CODEX_HOME:-$HOME/.codex}/skills`. Set `CODEX_SKILLS_DIR` to override the destination. Run it after cloning, pulling, or changing a skill. It replaces only same-named skill folders and leaves other installed skills alone. Deleting a skill from this repository does not uninstall its local copy.
 
+## Bundled skills
+
+These skills are maintained in this repository and installed by the script above.
+
+| Skill | Useful for |
+| --- | --- |
+| [performance-aware-coding](skills/performance-aware-coding/SKILL.md) | Spotting likely runtime costs during implementation or review, then validating meaningful optimizations with evidence. |
+| [brand-domain-research](skills/brand-domain-research/SKILL.md) | Brainstorming brand and product names, suggesting matching domains, and checking registration records with RDAP when requested. |
+
 ## Add a skill
 
 Add `skills/<name>/SKILL.md` with the required name and description front matter. Include `agents/openai.yaml` or supporting files only when needed. Keep changes evidence-based and review them before installing.
