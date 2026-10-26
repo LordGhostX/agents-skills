@@ -36,6 +36,7 @@ These skills are maintained outside this repository and are not copied or instal
 | `security-threat-model` | Mapping a repository's trust boundaries, assets, attacker paths, and mitigations. | [openai/skills](https://github.com/openai/skills/tree/main/skills/.curated/security-threat-model) |
 | `prune-tests` | Finding brittle or tautological tests and removing them when cleanup is authorized. | [riffingonsoftware/agent-skills](https://github.com/riffingonsoftware/agent-skills/tree/trunk/skills/prune-tests) |
 | `security-audit` | Running a structured, source-grounded security audit. | [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill/tree/main/skills/security-audit) |
+| `skill-shelf` | A registry of reusable agent skills (web pentesting, appsec, mobile hacking, secure code review, reporting, and more) served as plain Markdown over GitHub Pages. | [DghostNinja/Skill-Shelf](https://github.com/DghostNinja/Skill-Shelf) |
 
 ## License
 
