@@ -44,6 +44,7 @@ For each candidate, connect the code location to its repetition or growth, where
 ## Select a proportionate fix
 
 - Prefer removing unnecessary work and fixing algorithmic or structural causes before tuning small operations. A suitable lookup structure may replace repeated scans; one batch operation may replace per-item I/O; an existing result may be reused instead of fetched or derived again.
+- For database write paths, compare row-by-row calls, the driver's batch API, and set-based SQL at realistic batch sizes. Fewer round trips alone do not prove a faster path.
 - Combine or parallelize independent work only when the API and semantics support it. Bound concurrency and preserve required ordering, cancellation, failure handling, and resource limits. A lower wall-clock time can still increase CPU, memory, provider load, or failure risk.
 - Add an index or change a query based on the actual query shape and plan. An index also costs storage and write work; a query that is already fast may not benefit.
 - Cache only when repeated reads and reuse justify it. Establish freshness requirements, key completeness, invalidation, memory limits, and stampede behavior. A cache can add a network hop and a correctness bug.
