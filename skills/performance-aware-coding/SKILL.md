@@ -1,6 +1,6 @@
 ---
 name: performance-aware-coding
-description: Use during implementation or review when changes touch repeated work, growing data, rendering, I/O, persistence, or resource use, and when investigating a performance issue. Provides stack-neutral cost analysis, on-demand ecosystem research, and evidence-based validation.
+description: Use during implementation or review when changes touch repeated work, growing data, rendering, I/O, persistence, or resource use; when investigating a performance issue or why something is slow; and when asked to audit code or a repository for performance. Provides stack-neutral cost analysis, a measured audit with ranked findings, on-demand ecosystem research, and evidence-based validation.
 ---
 
 # Performance-Aware Coding
@@ -11,6 +11,7 @@ Help prevent avoidable performance costs while preserving behavior. Apply a brie
 
 - **While implementing a feature:** inspect the affected path and do a quick cost pass. Call out or change a concern only when there is a concrete mechanism and a plausible impact; don't turn routine work into a performance audit.
 - **When investigating or reviewing performance:** map the path and workload, use measurements or the smallest useful diagnostic to locate the bottleneck, rank candidate fixes, and validate the result.
+- **When asked to audit, or to find why something is slow:** follow `references/audit.md` for scope, verification of each candidate, measurement, ranking, and the report format.
 - **When there is no concrete issue:** say so briefly when relevant. No findings is a valid result; do not generate generic advice to fill space.
 
 ## Understand the path and workload
@@ -55,7 +56,7 @@ For each candidate, connect the code location to its repetition or growth, where
 ## Measure and verify meaningful changes
 
 1. State the hypothesis in a falsifiable way: which work or metric should change, on which path, and under what workload.
-2. Use an existing benchmark, profiler, trace, query plan, browser performance trace, or telemetry when it fits. If evidence is insufficient, add the smallest safe measurement that can distinguish the likely bottleneck; do not begin with an unsupported rewrite.
+2. Use an existing benchmark, profiler, trace, query plan, browser performance trace, or telemetry when it fits. If evidence is insufficient, add the smallest safe measurement that can distinguish the likely bottleneck; do not begin with an unsupported rewrite. Read `references/measure.md` for method, tool choice, and safety limits before running measurements. When no benchmark tool is available, `scripts/perfstat.py` repeat-times a command and compares before and after samples; run it with `--help` for usage.
 3. Compare before and after using the same representative workload, data, relevant environment, and measurement method. Keep other changes out of the comparison where practical. Include success and failure paths when they affect the workload, and account for warm versus cold behavior when it changes the result.
 4. Measure the target and relevant trade-offs. Depending on the hypothesis, that may include latency distribution, throughput, errors, CPU, memory or allocations, database/network operations, payload or bundle size, and freshness or contention. Do not report every metric when it is unrelated.
 5. Check correctness separately. Functional tests passing do not establish an end-to-end speedup; a microbenchmark does not prove the whole request or user journey improved. Clear code structure can prove fewer operations or better asymptotic growth, but do not call an unmeasured end-to-end effect measured.
