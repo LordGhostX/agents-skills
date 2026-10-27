@@ -18,12 +18,12 @@ These skills are maintained in this repository and installed by the script above
 
 | Skill | Useful for |
 | --- | --- |
-| [performance-aware-coding](skills/performance-aware-coding/SKILL.md) | Spotting likely runtime costs during implementation or review, then validating meaningful optimizations with evidence. |
+| [performance-aware-coding](skills/performance-aware-coding/SKILL.md) | Spotting likely runtime costs during implementation or review, auditing a codebase or slow path with measured and ranked findings, and validating meaningful optimizations with evidence. |
 | [brand-domain-research](skills/brand-domain-research/SKILL.md) | Brainstorming brand and product names, suggesting matching domains, and checking registration records with RDAP when requested. |
 
 ## Add a skill
 
-Add `skills/<name>/SKILL.md` with the required name and description front matter. Include `agents/openai.yaml` or supporting files only when needed. Keep changes evidence-based and review them before installing.
+Add `skills/<name>/SKILL.md` with the required name and description front matter. Include `agents/openai.yaml` or supporting files only when needed. Keep changes evidence-based and review them before installing. Evals and their fixtures go in `evals/<name>/`, outside the installed skill folder.
 
 ## External recommendations
 
