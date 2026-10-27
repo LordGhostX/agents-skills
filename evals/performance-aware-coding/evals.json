@@ -1,0 +1,48 @@
+{
+  "skill_name": "performance-aware-coding",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit fixtures/py-orders for performance problems.",
+      "expected_output": "An audit report that measures the dashboard path, ranks the sort inside top_products first because it dominates the measured time, reports the per-order customer query as real but smaller on in-process SQLite, and leaves the decoys out of Fix now.",
+      "files": ["fixtures/py-orders"],
+      "expectations": [
+        "Finds the full sort repeated once per product in shop/reports.py top_products and puts it in Fix now",
+        "Ranks top_products above the per-order customer query, citing a measurement or profile that shows it dominates",
+        "Finds the per-order customer lookup (N+1) and does not describe it as a network round trip; production is an in-process SQLite file",
+        "Notes that dashboard_report loads every order and that the table grows about 5,000 rows a day, under Worth doing or Watch",
+        "Does not put the one-off migration in migrations/0002_backfill_totals.py in Fix now",
+        "Does not flag rate_for as repeated file reads or JSON parsing; it is lru_cached",
+        "Does not put the three-region loop in totals_by_region in Fix now",
+        "Every number in the report comes from a command it ran, and each finding is labelled MEASURED or INFERRED",
+        "Leaves the fixture source unchanged when done (temporary instrumentation removed)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The monthly report endpoint in fixtures/js-report feels slow. Find out why.",
+      "expected_output": "A measured explanation: the 40 invoice fetches run one after another and dominate; the settings JSON is parsed again for every line; the fix runs the independent fetches with concurrency bounded by the API's 20-request limit and parses settings once. The dependent customer-then-account calls and the start-up plugin scan are left alone.",
+      "files": ["fixtures/js-report"],
+      "expectations": [
+        "Identifies the awaited fetchInvoice inside the for loop as serial independent requests and ranks it first, with a measured time",
+        "Recommends running the invoice fetches concurrently with a bound at or below the 20-request limit from the README, not an unbounded Promise.all over any size",
+        "Finds JSON.parse(SETTINGS_JSON) repeated per line and suggests parsing once",
+        "Does not recommend parallelising fetchCustomer and fetchAccount; account depends on customer.accountId",
+        "Does not put loadPlugins' synchronous reads in Fix now; they run once at start-up",
+        "Every number in the report comes from a command it ran, and each finding is labelled MEASURED or INFERRED",
+        "Leaves the fixture source unchanged when done (temporary instrumentation removed)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "In fixtures/py-orders, add a function customer_order_count(conn, customer_id) to shop/reports.py that returns how many orders a customer has.",
+      "expected_output": "The function is added with a single COUNT query. No audit report, no benchmark infrastructure; at most one line on cost.",
+      "files": ["fixtures/py-orders"],
+      "expectations": [
+        "Adds customer_order_count using one SQL COUNT query rather than loading rows into Python",
+        "Does not produce a full audit report or findings list for unrelated code",
+        "Does not add benchmark infrastructure or a performance gate"
+      ]
+    }
+  ]
+}
