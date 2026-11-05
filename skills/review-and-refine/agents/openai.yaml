@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review and Refine"
+  short_description: "Coordinate independent reviews and verified fixes"
+  default_prompt: "Use $review-and-refine to assess the requested review target and propose a plan for approval before launching reviewers or making fixes."
