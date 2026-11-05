@@ -12,12 +12,25 @@ python3 scripts/install_skills.py
 
 The installer copies skills to `${CODEX_HOME:-$HOME/.codex}/skills`. Set `CODEX_SKILLS_DIR` to override the destination. Run it after cloning, pulling, or changing a skill. It replaces only same-named skill folders and leaves other installed skills alone. Deleting a skill from this repository does not uninstall its local copy.
 
+## Export a transcript
+
+Export a local Codex session and its subagent sessions for evaluation (Python 3.11+):
+
+```sh
+python3 scripts/extract_transcript.py SESSION_ID --output ~/Desktop/transcript.txt
+```
+
+The script accepts a session ID or JSONL path and searches active and archived logs under `CODEX_HOME` (default `~/.codex`). It exports public messages and tool activity, excluding private reasoning and system/developer instructions. Use `--until` to stop at a timestamp, `--include-nested-tools` for additional command/connector records, or `--no-subagents` for one session. Existing output files are never overwritten.
+
+Exports can contain sensitive user/tool text. `--redact-file` accepts one literal value per line to replace with `[REDACTED]`; it is not an automatic secret detector. Run `--help` for all options. This utility stays in the repository and is not installed with skills.
+
 ## Bundled skills
 
 These skills are maintained in this repository and installed by the script above.
 
 | Skill | Useful for |
 | --- | --- |
+| [review-and-refine](skills/review-and-refine/SKILL.md) | Coordinating independent reviews and optional iterative fixes through an approved plan, with model choice, scope control, and goal-mode support. |
 | [performance-aware-coding](skills/performance-aware-coding/SKILL.md) | Spotting likely runtime costs during implementation or review, then validating meaningful optimizations with evidence. |
 | [brand-domain-research](skills/brand-domain-research/SKILL.md) | Brainstorming brand and product names, suggesting matching domains, and checking registration records with RDAP when requested. |
 
