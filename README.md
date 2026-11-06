@@ -23,7 +23,7 @@ python3 scripts/install_skills.py --target all            # all three
 
 Older standalone Antigravity IDE builds read `~/.gemini/antigravity/skills`; set `ANTIGRAVITY_SKILLS_DIR` to that path if yours does not pick up skills from the default.
 
-Run the installer after cloning, pulling, or changing a skill. It replaces only same-named skill folders and leaves other installed skills alone. Deleting a skill from this repository does not uninstall its local copies. Codex-only metadata (`agents/openai.yaml`) is installed only for the `codex` target.
+Rerun the installer after cloning, pulling, or editing skills. It replaces only same-named skill folders; deleting a source skill doesn't uninstall its copies. Target directories must be distinct from each other and the source `skills/` directory. Validation happens before copying but may leave empty destination folders. Only Codex installs include `agents/openai.yaml`.
 
 All three agents load a skill automatically when a request matches its description. You can also invoke one directly: `$skill-name` in Codex, `/skill-name` in Claude Code, or by naming the skill in an Antigravity prompt.
 

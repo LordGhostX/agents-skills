@@ -72,8 +72,6 @@ def prune_empty_dirs(root):
 
 
 def install(target, install_root, sources):
-    install_root.mkdir(parents=True, exist_ok=True)
-
     for source in sources:
         destination = install_root / source.name
 
@@ -116,5 +114,25 @@ for source in sources:
     if not (source / "SKILL.md").is_file():
         raise SystemExit(f"Missing SKILL.md: {source}")
 
-for target in targets:
-    install(target, TARGETS[target](), sources)
+install_roots = {target: TARGETS[target]() for target in targets}
+validated_roots = {}
+
+for target, install_root in install_roots.items():
+    install_root.mkdir(parents=True, exist_ok=True)
+    if install_root.samefile(source_root):
+        raise SystemExit(
+            f"Refusing to install {target} into the skills source directory: "
+            f"{install_root}"
+        )
+
+    for other_target, other_root in validated_roots.items():
+        if install_root.samefile(other_root):
+            raise SystemExit(
+                f"Skill destinations for {other_target} and {target} identify "
+                f"the same directory: {install_root}"
+            )
+
+    validated_roots[target] = install_root
+
+for target, install_root in install_roots.items():
+    install(target, install_root, sources)
