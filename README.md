@@ -1,16 +1,31 @@
 # agents-skills
 
-Personal, cross-project Codex skills. This repository is the source of truth; installed copies are generated from it.
+Personal, cross-project agent skills for Codex, Claude Code, and Antigravity. This repository is the source of truth; installed copies are generated from it.
 
 ## Install or refresh
 
-From the repository root, run:
+From the repository root, run the installer for the agents you use:
 
 ```sh
-python3 scripts/install_skills.py
+python3 scripts/install_skills.py                         # Codex (default)
+python3 scripts/install_skills.py --target claude         # Claude Code
+python3 scripts/install_skills.py --target antigravity    # Antigravity
+python3 scripts/install_skills.py --target all            # all three
 ```
 
-The installer copies skills to `${CODEX_HOME:-$HOME/.codex}/skills`. Set `CODEX_SKILLS_DIR` to override the destination. Run it after cloning, pulling, or changing a skill. It replaces only same-named skill folders and leaves other installed skills alone. Deleting a skill from this repository does not uninstall its local copy.
+`--target` can be repeated. Each target installs to its global skills directory:
+
+| Target | Default destination | Override |
+| --- | --- | --- |
+| `codex` | `${CODEX_HOME:-$HOME/.codex}/skills` | `CODEX_SKILLS_DIR` |
+| `claude` | `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills` | `CLAUDE_SKILLS_DIR` |
+| `antigravity` | `$HOME/.gemini/config/skills` | `ANTIGRAVITY_SKILLS_DIR` |
+
+Older standalone Antigravity IDE builds read `~/.gemini/antigravity/skills`; set `ANTIGRAVITY_SKILLS_DIR` to that path if yours does not pick up skills from the default.
+
+Rerun the installer after cloning, pulling, or editing skills. It replaces only same-named skill folders; deleting a source skill doesn't uninstall its copies. Target directories must be distinct from each other and the source `skills/` directory. Validation happens before copying but may leave empty destination folders. Only Codex installs include `agents/openai.yaml`.
+
+All three agents load a skill automatically when a request matches its description. You can also invoke one directly: `$skill-name` in Codex, `/skill-name` in Claude Code, or by naming the skill in an Antigravity prompt.
 
 ## Export a transcript
 
@@ -37,7 +52,7 @@ These skills are maintained in this repository and installed by the script above
 
 ## Add a skill
 
-Add `skills/<name>/SKILL.md` with the required name and description front matter. Include `agents/openai.yaml` or supporting files only when needed. Keep changes evidence-based and review them before installing.
+Add `skills/<name>/SKILL.md` with `name` (matching the folder; lowercase letters, digits, and hyphens) and `description` front matter. Keep instructions tool-neutral so they work in Codex, Claude Code, and Antigravity. Include `agents/openai.yaml` (Codex-only) or supporting files only when needed. Keep changes evidence-based and review them before installing.
 
 ## External recommendations
 

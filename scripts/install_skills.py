@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import os
 import shutil
 from pathlib import Path
@@ -6,17 +7,101 @@ from pathlib import Path
 repo_root = Path(__file__).resolve().parents[1]
 source_root = repo_root / "skills"
 
-codex_home_value = os.environ.get("CODEX_HOME")
-if codex_home_value:
-    codex_home = Path(codex_home_value).expanduser()
-else:
-    codex_home = Path.home() / ".codex"
+# Files that only one agent understands. Other targets skip them.
+CODEX_ONLY_FILES = {Path("agents") / "openai.yaml"}
 
-install_root_value = os.environ.get("CODEX_SKILLS_DIR")
-if install_root_value:
-    install_root = Path(install_root_value).expanduser()
-else:
-    install_root = codex_home / "skills"
+
+def env_path(name):
+    value = os.environ.get(name)
+    return Path(value).expanduser() if value else None
+
+
+def codex_root():
+    home = env_path("CODEX_HOME") or Path.home() / ".codex"
+    return env_path("CODEX_SKILLS_DIR") or home / "skills"
+
+
+def claude_root():
+    home = env_path("CLAUDE_CONFIG_DIR") or Path.home() / ".claude"
+    return env_path("CLAUDE_SKILLS_DIR") or home / "skills"
+
+
+def antigravity_root():
+    default = Path.home() / ".gemini" / "config" / "skills"
+    return env_path("ANTIGRAVITY_SKILLS_DIR") or default
+
+
+TARGETS = {
+    "codex": codex_root,
+    "claude": claude_root,
+    "antigravity": antigravity_root,
+}
+
+
+def parse_targets():
+    parser = argparse.ArgumentParser(
+        description="Install the skills in this repository for one or more agents."
+    )
+    parser.add_argument(
+        "--target",
+        action="append",
+        choices=[*TARGETS, "all"],
+        help="Agent to install for. Repeat for several; defaults to codex.",
+    )
+    targets = parser.parse_args().target or ["codex"]
+    if "all" in targets:
+        return list(TARGETS)
+    return list(dict.fromkeys(targets))
+
+
+def ignore_for(target, source):
+    if target == "codex":
+        return None
+
+    def ignore(directory, names):
+        relative = Path(directory).relative_to(source)
+        return {name for name in names if relative / name in CODEX_ONLY_FILES}
+
+    return ignore
+
+
+def prune_empty_dirs(root):
+    for directory in sorted(root.rglob("*"), reverse=True):
+        if directory.is_dir() and not any(directory.iterdir()):
+            directory.rmdir()
+
+
+def install(target, install_root, sources):
+    for source in sources:
+        destination = install_root / source.name
+
+        if destination.is_symlink():
+            raise SystemExit(
+                f"Refusing to replace symlinked skill destination: {destination}"
+            )
+        if destination.exists() and not destination.is_dir():
+            raise SystemExit(f"Skill destination is not a directory: {destination}")
+
+        staged = install_root / f".{source.name}.installing"
+        if staged.exists():
+            if staged.is_symlink() or not staged.is_dir():
+                staged.unlink()
+            else:
+                shutil.rmtree(staged)
+
+        ignore = ignore_for(target, source)
+        shutil.copytree(source, staged, ignore=ignore)
+        if ignore:
+            prune_empty_dirs(staged)
+
+        if destination.exists():
+            shutil.rmtree(destination)
+
+        staged.replace(destination)
+        print(f"Installed {source.name} ({target}) -> {destination}")
+
+
+targets = parse_targets()
 
 if not source_root.is_dir():
     raise SystemExit(f"Skills source directory not found: {source_root}")
@@ -29,29 +114,25 @@ for source in sources:
     if not (source / "SKILL.md").is_file():
         raise SystemExit(f"Missing SKILL.md: {source}")
 
-install_root.mkdir(parents=True, exist_ok=True)
+install_roots = {target: TARGETS[target]() for target in targets}
+validated_roots = {}
 
-for source in sources:
-    destination = install_root / source.name
-
-    if destination.is_symlink():
+for target, install_root in install_roots.items():
+    install_root.mkdir(parents=True, exist_ok=True)
+    if install_root.samefile(source_root):
         raise SystemExit(
-            f"Refusing to replace symlinked skill destination: {destination}"
+            f"Refusing to install {target} into the skills source directory: "
+            f"{install_root}"
         )
-    if destination.exists() and not destination.is_dir():
-        raise SystemExit(f"Skill destination is not a directory: {destination}")
 
-    staged = install_root / f".{source.name}.installing"
-    if staged.exists():
-        if staged.is_symlink() or not staged.is_dir():
-            staged.unlink()
-        else:
-            shutil.rmtree(staged)
+    for other_target, other_root in validated_roots.items():
+        if install_root.samefile(other_root):
+            raise SystemExit(
+                f"Skill destinations for {other_target} and {target} identify "
+                f"the same directory: {install_root}"
+            )
 
-    shutil.copytree(source, staged)
+    validated_roots[target] = install_root
 
-    if destination.exists():
-        shutil.rmtree(destination)
-
-    staged.replace(destination)
-    print(f"Installed {source.name} -> {destination}")
+for target, install_root in install_roots.items():
+    install(target, install_root, sources)
