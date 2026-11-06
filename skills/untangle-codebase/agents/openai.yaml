@@ -1,0 +1,4 @@
+interface:
+  display_name: "Untangle Codebase"
+  short_description: "Diagnose coupling and simplify code structure"
+  default_prompt: "Use $untangle-codebase to inspect the requested area for structural coupling and unnecessary indirection, then propose a scoped refactoring plan."

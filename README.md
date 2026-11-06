@@ -31,6 +31,7 @@ These skills are maintained in this repository and installed by the script above
 | Skill | Useful for |
 | --- | --- |
 | [review-and-refine](skills/review-and-refine/SKILL.md) | Coordinating independent reviews and optional iterative fixes through an approved plan, with model choice, scope control, and goal-mode support. |
+| [untangle-codebase](skills/untangle-codebase/SKILL.md) | Diagnosing structural coupling and unnecessary indirection, then refactoring within an agreed scope while preserving behavior. |
 | [performance-aware-coding](skills/performance-aware-coding/SKILL.md) | Spotting likely runtime costs during implementation or review, then validating meaningful optimizations with evidence. |
 | [brand-domain-research](skills/brand-domain-research/SKILL.md) | Brainstorming brand and product names, suggesting matching domains, and checking registration records with RDAP when requested. |
 
