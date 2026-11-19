@@ -63,6 +63,7 @@ These skills are maintained outside this repository and are not copied or instal
 | Skill | Useful for | Upstream source |
 | --- | --- | --- |
 | `browse-x` | Reading public X posts, threads, profiles, and search results as Markdown or JSON. | [pc-style/x-md](https://github.com/pc-style/x-md/tree/main/skills/browse-x) |
+| `impeccable` | Designing and building frontend interfaces, refining and auditing existing screens, and documenting design systems. | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) |
 | `security-best-practices` | Applying language- and framework-specific secure coding guidance. | [openai/skills](https://github.com/openai/skills/tree/main/skills/.curated/security-best-practices) |
 | `security-threat-model` | Mapping a repository's trust boundaries, assets, attacker paths, and mitigations. | [openai/skills](https://github.com/openai/skills/tree/main/skills/.curated/security-threat-model) |
 | `prune-tests` | Finding brittle or tautological tests and removing them when cleanup is authorized. | [riffingonsoftware/agent-skills](https://github.com/riffingonsoftware/agent-skills/tree/trunk/skills/prune-tests) |
